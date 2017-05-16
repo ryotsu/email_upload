@@ -36,6 +36,10 @@ defmodule Uploader.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:pqueue, "~> 1.7"},
+      {:credo, "~> 0.7", only: [:dev, :test]},
+      {:dogma, "~> 0.1", only: [:dev, :test]},
+    ]
   end
 end
