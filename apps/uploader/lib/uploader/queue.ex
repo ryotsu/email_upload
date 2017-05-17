@@ -26,11 +26,11 @@ defmodule  Uploader.Queue do
   end
 
   def init(:ok) do
-    {:ok, :pqueue.new}
+    {:ok, :pqueue2.new()}
   end
 
   def handle_cast({:push, value, priority}, queue) do
-    new_queue = :pqueue.in(value, priority, queue)
+    new_queue = :pqueue2.in(value, priority, queue)
     {:noreply, new_queue}
   end
 
@@ -55,7 +55,7 @@ defmodule  Uploader.Queue do
   end
 
   defp get_items(queue, count, values) do
-    case :pqueue.out(queue) do
+    case :pqueue2.out(queue) do
       {{:value, value}, new_queue} ->
         get_items(new_queue, count - 1, [value | values])
       {:empty, new_queue} ->

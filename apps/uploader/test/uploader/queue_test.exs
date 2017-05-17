@@ -11,8 +11,8 @@ defmodule Uploader.QueueTest do
   test "push and pop" do
     assert Queue.push("World", 2) == :ok
     Queue.push("Hello", 1)
-    Queue.push("!", 4)
-    Queue.push("Somewhere", 3)
+    Queue.push("!", 4_000_000_000_000)
+    Queue.push("Somewhere", 30_000_000)
 
     assert Queue.pop() == ["Hello"]
     assert Queue.pop(2) == ["World", "Somewhere"]
