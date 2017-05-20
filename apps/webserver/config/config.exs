@@ -23,6 +23,26 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+# Configure Cloak
+config :cloak, Cloak.AES.CTR,
+  tag: "AES",
+  default: true,
+  keys: [
+    %{tag: <<1>>,
+      key: :base64.decode("geTCJriksWW3LJBz2qwZKduG+4RA7Y8k0spqo24BSO4="),
+      default: true}
+  ]
+
+# Ueberauth
+config :ueberauth, Ueberauth,
+  providers: [
+    dropbox: {Ueberauth.Strategy.Dropbox, []},
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Dropbox.OAuth,
+  client_id: "n5p3fxkcse8u70o",
+  client_secret: "tp9cpgou08u3oxh"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

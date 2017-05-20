@@ -9,7 +9,7 @@ config :dogma,
   # Pick paths not to lint
   exclude: [
     ~r(/config/),
-    ~r(/test_helper.exs)
+    ~r(/test/)
   ],
 
   # Override an existing rule configuration

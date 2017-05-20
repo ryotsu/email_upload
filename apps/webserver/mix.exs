@@ -21,7 +21,7 @@ defmodule Webserver.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Webserver.Application, []},
-     extra_applications: [:logger, :runtime_tools]]
+     extra_applications: [:logger, :runtime_tools, :cloak, :ueberauth]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,6 +38,9 @@ defmodule Webserver.Mixfile do
      {:postgrex, ">= 0.0.0"},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
+     {:cloak, github: "boydm/cloak"},
+     {:ueberauth, "0.4.0"},
+     {:ueberauth_dropbox, "0.1.1"},
      {:credo, "~> 0.7", only: [:dev, :test]},
      {:dogma, "~> 0.1", only: [:dev, :test]},
     ]
