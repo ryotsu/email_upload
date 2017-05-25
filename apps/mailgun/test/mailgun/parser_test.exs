@@ -39,6 +39,6 @@ defmodule Mailgun.ParserTest do
   test "parse mail when service is invalid" do
     mail = %{@valid_mail | "recipient" => "somerecipient@gdrive.kochika.me"}
 
-    assert {:error, "Unrecognized service: gdrive"} == Parser.verify_and_parse(mail)
+    assert {:error, "Unrecognized service"} == Parser.verify_and_parse(mail)
   end
 end

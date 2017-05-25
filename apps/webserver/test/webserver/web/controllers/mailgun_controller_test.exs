@@ -19,8 +19,7 @@ defmodule Webserver.Web.MailgunControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
-  test "push email when valid", %{conn: conn} do
-
+  test "push email to queue when valid", %{conn: conn} do
     _conn = post conn, mailgun_path(conn, :webhook), @valid_mail
     assert Queue.pop == [%Mail{
       sender: "somesender@gmail.com",
@@ -42,5 +41,23 @@ defmodule Webserver.Web.MailgunControllerTest do
     }]
 
     assert Queue.pop == []
+  end
+
+  test "push email to queue when invalid signature", %{conn: conn} do
+    invalid_email = %{@valid_mail | "timestamp" => "123"}
+    conn = post conn, mailgun_path(conn, :webhook), invalid_email
+    assert json_response(conn, 406)["errors"] == %{"detail" => "Invalid signature"}
+  end
+
+  test "push email to queue when invalid service", %{conn: conn} do
+    invalid_email = %{@valid_mail | "recipient" => "namespace@invalid.kochika.me"}
+    conn = post conn, mailgun_path(conn, :webhook), invalid_email
+    assert json_response(conn, 406)["errors"] == %{"detail" => "Unrecognized service"}
+  end
+
+  test "push email to queue when invalid namespace", %{conn: conn} do
+    invalid_email = %{@valid_mail | "recipient" => "invalid@dropbox.kochika.me"}
+    conn = post conn, mailgun_path(conn, :webhook), invalid_email
+    assert json_response(conn, 406)["errors"] == %{"detail" => "Unknown user"}
   end
 end

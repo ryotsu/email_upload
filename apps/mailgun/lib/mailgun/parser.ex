@@ -29,27 +29,29 @@ defmodule Mailgun.Parser do
   @spec parse(map) :: Mail.t
   defp parse(request) do
     with {:ok, namespace, service} <- name_and_service(request),
-         {:ok, attachments} <- get_attachments(request),
-      do: {:ok, %Mail{
-              sender: request["sender"],
-              service: service,
-              namespace: namespace,
-              attachments: attachments,
-              timestamp: request["timestamp"] |> String.to_integer
-            }
-          }
+         {:ok, attachments} <- get_attachments(request) do
+      {:ok, %Mail{
+          sender: request["sender"],
+          service: service,
+          namespace: namespace,
+          attachments: attachments,
+          timestamp: request["timestamp"] |> String.to_integer
+        }
+      }
+    end
   end
 
   @spec name_and_service(map) :: {:ok, String.t, atom} | {:error, String.t}
   defp name_and_service(%{"recipient" => addr}) do
-    [^addr, namespace, service] = Regex.run(~r/(.*)@(.*)\.kochika\.me/, addr)
-    case service do
-      "dropbox" ->
+    case Regex.run(~r/(.*)@(.*)\.kochika\.me/, addr) do
+      [^addr, namespace, "dropbox"] ->
         {:ok, namespace, :dropbox}
       _ ->
-        {:error, "Unrecognized service: #{service}"}
+        {:error, "Unrecognized service"}
     end
   end
+
+  defp name_and_service(_request), do: {:error, "No name or service"}
 
   @spec get_attachments(map) :: {:ok, [Attachment.t]}
   defp get_attachments(%{"attachments" => attachments}) do
@@ -66,6 +68,8 @@ defmodule Mailgun.Parser do
 
     {:ok, parsed_attachments}
   end
+
+  defp get_attachments(_request), do: {:error, "No attachments"}
 
   defp key do
     Application.get_env(:mailgun, :api_key)
