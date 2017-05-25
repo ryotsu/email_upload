@@ -3,7 +3,6 @@ defmodule Webserver.Web.UserController do
 
   alias Webserver.Account
   alias Webserver.Account.User
-  alias Ueberauth.Auth
 
   plug Ueberauth
 

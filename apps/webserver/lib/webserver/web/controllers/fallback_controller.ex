@@ -23,4 +23,10 @@ defmodule Webserver.Web.FallbackController do
     |> put_status(:bad_request)
     |> render(Webserver.Web.ErrorView, :authentication_failed)
   end
+
+  def call(conn, {:error, :parsing_failed, error}) do
+    conn
+    |> put_status(:not_acceptable)
+    |> render(Webserver.Web.ErrorView, "parsing_failed.json", error: error)
+  end
 end

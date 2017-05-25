@@ -14,9 +14,10 @@ defmodule Webserver.Web.Router do
     get "/:provider/callback", UserController, :callback
   end
 
-  # scope "/api", Webserver.Web do
-  #   pipe_through :api
+  scope "/", Webserver.Web do
+    pipe_through :api
 
-  #   resources "/users", UserController, only: [:update, :delete, :show]
-  # end
+    post Application.get_env(:mailgun, :hook_url), MailgunController, :webhook
+    #resources "/users", UserController, only: [:update, :delete, :show]
+  end
 end

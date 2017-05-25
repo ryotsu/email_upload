@@ -106,4 +106,16 @@ defmodule Webserver.Account do
   def change_user(%User{} = user) do
     User.changeset(user, %{})
   end
+
+  def get_token(namespace, service) do
+    user = Repo.get_by(User, namespace: namespace)
+    case {user, service} do
+      {nil, _} ->
+        {:error, "Unknown user"}
+      {u, :dropbox} ->
+        {:ok, u.dropbox_token}
+      {_, _} ->
+        {:error, "Service not supported"}
+    end
+  end
 end

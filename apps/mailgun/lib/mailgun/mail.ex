@@ -7,7 +7,7 @@ defmodule Mailgun.Mail do
 
   @enforce_keys [:sender, :service, :namespace, :attachments, :timestamp]
 
-  defstruct [:sender, :service, :namespace, :attachments, :timestamp]
+  defstruct [:sender, :service, :token, :namespace, :attachments, :timestamp]
 
   @typedoc """
   Represents Mail struct as a type
@@ -15,6 +15,7 @@ defmodule Mailgun.Mail do
   @type t :: %__MODULE__{
     sender: String.t,
     service: :dropbox,
+    token: String.t | nil,
     namespace: String.t,
     attachments: [Attachment.t],
     timestamp: integer

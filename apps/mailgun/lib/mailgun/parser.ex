@@ -8,9 +8,9 @@ defmodule Mailgun.Parser do
 
   @spec verify_and_parse(map) :: {:ok, Mail.t} | {:error, String.t}
   def verify_and_parse(request) do
-    timestamp = request["timestamp"]
-    token = request["token"]
-    signature = request["signature"]
+    timestamp = Map.get(request, "timestamp", "")
+    token = Map.get(request, "token", "")
+    signature = Map.get(request, "signature", "")
 
     mail_signature =
       :sha256
