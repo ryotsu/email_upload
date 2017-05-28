@@ -14,7 +14,7 @@ defmodule Webserver.Web.MailgunControllerTest do
 
 
   setup %{conn: conn} do
-    {:ok, _queue} = Queue.start_link()
+    Queue.start_link()
     {:ok, _user} = Account.create_user(@create_attrs)
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end

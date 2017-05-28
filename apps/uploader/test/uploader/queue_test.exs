@@ -4,7 +4,7 @@ defmodule Uploader.QueueTest do
   alias Uploader.Queue
 
   setup do
-    {:ok, _queue} = Queue.start_link
+    Queue.start_link
     :ok
   end
 
