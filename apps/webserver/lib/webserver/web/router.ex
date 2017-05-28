@@ -17,7 +17,7 @@ defmodule Webserver.Web.Router do
   scope "/", Webserver.Web do
     pipe_through :api
 
-    post Application.get_env(:mailgun, :hook_url), MailgunController, :webhook
+    post Application.get_env(:mailgun, :webhook_url), MailgunController, :webhook
     #resources "/users", UserController, only: [:update, :delete, :show]
   end
 end

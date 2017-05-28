@@ -3,63 +3,58 @@ defmodule  Uploader.Queue do
   Queue for storing upload requests
   """
 
-  use GenServer
+  use GenStage
+
+  alias Uploader.Store
 
   @spec start_link() :: {:ok, pid}
   def start_link do
-    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
+    GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   @spec push(term, integer) :: :ok
   def push(value, priority) do
-    GenServer.cast(__MODULE__, {:push, value, priority})
+    GenStage.cast(__MODULE__, {:push, value, priority})
   end
 
-  @spec pop(integer) :: [term]
-  def pop(count \\ 1) do
-    GenServer.call(__MODULE__, {:pop, count})
-  end
-
-  @spec stop() :: :ok
-  def stop do
-    GenServer.call(__MODULE__, :stop)
+  @spec stop(atom) :: :ok
+  def stop(reason \\ :normal) do
+    GenServer.stop(__MODULE__, reason)
   end
 
   def init(:ok) do
-    {:ok, :pqueue2.new()}
+    case Store.get(:queue) do
+      {:ok, {queue, demand}} ->
+        {:producer, {queue, demand}, dispatcher: GenStage.BroadcastDispatcher}
+      {:error, _err} ->
+        {:producer, {:pqueue2.new, 0}, dispatcher: GenStage.BroadcastDispatcher}
+    end
   end
 
-  def handle_cast({:push, value, priority}, queue) do
-    new_queue = :pqueue2.in(value, priority, queue)
-    {:noreply, new_queue}
+  def handle_cast({:push, event, priority}, {queue, pending_demand}) do
+    queue = :pqueue2.in(event, priority, queue)
+    dispatch_events(queue, pending_demand, [])
   end
 
-  def handle_call({:pop, count}, _from, queue) do
-    {values, new_queue} = get_items(queue, count)
-    {:reply, values |> Enum.reverse, new_queue}
+  def handle_demand(incoming_demand, {queue, pending_demand}) do
+    dispatch_events(queue, pending_demand + incoming_demand, [])
   end
 
-  def handle_call(:stop, _from, queue) do
-    {:stop, :normal, queue}
-  end
-
-  def terminate(_reason, _queue) do
+  def terminate(_reason, {queue, demand}) do
+    Store.set(:queue, {queue, demand})
     :ok
   end
 
-  @spec get_items(term, integer, [term]) :: {[term], term}
-  defp get_items(queue, count, values \\ [])
-
-  defp get_items(queue, 0, values) do
-    {values, queue}
+  defp dispatch_events(queue, 0, events) do
+    {:noreply, Enum.reverse(events), {queue, 0}}
   end
 
-  defp get_items(queue, count, values) do
+  defp dispatch_events(queue, demand, events) do
     case :pqueue2.out(queue) do
-      {{:value, value}, new_queue} ->
-        get_items(new_queue, count - 1, [value | values])
-      {:empty, new_queue} ->
-        {values, new_queue}
+      {{:value, event}, queue} ->
+        dispatch_events(queue, demand - 1, [event | events])
+      {:empty, queue} ->
+        {:noreply, Enum.reverse(events), {queue, demand}}
     end
   end
 end

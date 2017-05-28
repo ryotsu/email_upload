@@ -3,16 +3,9 @@ defmodule Uploader do
   Documentation for Uploader.
   """
 
-  @doc """
-  Hello world.
+  use Application
 
-  ## Examples
-
-      iex> Uploader.hello
-      :world
-
-  """
-  def hello do
-    :world
+  def start(_type, _args) do
+    Uploader.Supervisor.start_link()
   end
 end

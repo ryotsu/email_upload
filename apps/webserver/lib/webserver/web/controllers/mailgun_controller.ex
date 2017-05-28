@@ -14,7 +14,9 @@ defmodule Webserver.Web.MailgunController do
         with {:ok, token} <- Account.get_token(mail.namespace, mail.service) do
           new_mail = %Mail{mail | token: token}
           Queue.push(new_mail, new_mail.timestamp)
-          send_resp(conn, :ok, "")
+          conn
+          |> put_status(:ok)
+          |> render("status.json", status: "success")
         end
       {:error, error} ->
         {:error, :parsing_failed, error}

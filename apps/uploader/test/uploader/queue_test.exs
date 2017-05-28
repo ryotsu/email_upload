@@ -4,19 +4,14 @@ defmodule Uploader.QueueTest do
   alias Uploader.Queue
 
   setup do
-    Queue.start_link
-    :ok
+    Application.stop(:uploader)
+    :ok = Application.start(:uploader)
   end
 
-  test "push and pop" do
+  test "queue push" do
     assert Queue.push("World", 2) == :ok
     Queue.push("Hello", 1)
     Queue.push("!", 4_000_000_000_000)
     Queue.push("Somewhere", 30_000_000)
-
-    assert Queue.pop() == ["Hello"]
-    assert Queue.pop(2) == ["World", "Somewhere"]
-    assert Queue.pop(2) == ["!"]
-    assert Queue.pop() == []
   end
 end

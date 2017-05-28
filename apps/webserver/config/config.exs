@@ -13,7 +13,7 @@ config :webserver,
 # Configures the endpoint
 config :webserver, Webserver.Web.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "c/BtKZSfK74bj92DVU9n2Em1Q3YOVm7w9WVq0UyIe6sUi9n3kuPFSLe568ijUXq7",
+  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: Webserver.Web.ErrorView, accepts: ~w(json)],
   pubsub: [name: Webserver.PubSub,
            adapter: Phoenix.PubSub.PG2]
@@ -29,7 +29,7 @@ config :cloak, Cloak.AES.CTR,
   default: true,
   keys: [
     %{tag: <<1>>,
-      key: :base64.decode("geTCJriksWW3LJBz2qwZKduG+4RA7Y8k0spqo24BSO4="),
+      key: :base64.decode(System.get_env("CLOAK_ENCRYPTION_KEY")  || "6dtj3NCvhrXZs0V7YqP9NA1nVrlfhIWZSRBvMOmAClU="),
       default: true}
   ]
 
@@ -40,11 +40,11 @@ config :ueberauth, Ueberauth,
   ]
 
 config :ueberauth, Ueberauth.Strategy.Dropbox.OAuth,
-  client_id: "n5p3fxkcse8u70o",
-  client_secret: "tp9cpgou08u3oxh"
+  client_id: System.get_env("DROPBOX_CLIENT_ID"),
+  client_secret: System.get_env("DROPBOX_CLIENT_SECRET")
 
 config :mailgun,
-  hook_url: "/10949FE7281F93C0"
+  webhook_url: System.get_env("MAILGUN_WEBHOOK_URL") || "/webhook"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

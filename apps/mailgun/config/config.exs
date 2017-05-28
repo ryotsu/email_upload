@@ -27,6 +27,7 @@ use Mix.Config
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-#     import_config "#{Mix.env}.exs"
+# import_config "#{Mix.env}.exs"
 
-config :mailgun, api_key: "key-6fb029ff244a2c578ab2d935cc7d49d3"
+config :mailgun,
+  api_key: System.get_env("MAILGUN_API_KEY") || "key-6fb029ff244a2c578ab2d935cc7d49d3"

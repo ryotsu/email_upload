@@ -57,6 +57,7 @@ defmodule Mailgun.Parser do
   defp get_attachments(%{"attachments" => attachments}) do
     parsed_attachments =
       attachments
+      |> Poison.decode!
       |> Enum.map(fn attachment ->
       %Attachment{
         name: attachment["name"],

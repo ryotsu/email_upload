@@ -19,7 +19,8 @@ defmodule Uploader.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    [mod: {Uploader, []},
+     extra_applications: [:logger, :httpoison]]
   end
 
   # Dependencies can be Hex packages:
@@ -38,6 +39,9 @@ defmodule Uploader.Mixfile do
   defp deps do
     [
       {:pqueue, "~> 1.7"},
+      {:gen_stage, "~> 0.11"},
+      {:poison, "~> 3.1"},
+      {:httpoison, "~> 0.11.2"},
       {:credo, "~> 0.7", only: [:dev, :test]},
       {:dogma, "~> 0.1", only: [:dev, :test]},
     ]

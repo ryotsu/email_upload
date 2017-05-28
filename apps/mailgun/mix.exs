@@ -37,6 +37,8 @@ defmodule Mailgun.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
+      {:httpoison, "~> 0.11.2"},
+      {:poison, "~> 3.1"},
       {:credo, "~> 0.7", only: [:dev, :test]},
       {:dogma, "~> 0.1", only: [:dev, :test]},
     ]
